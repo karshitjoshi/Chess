@@ -27,6 +27,7 @@ ALLEGRO_TIMER* timer;
 bool redraw;
 int switcher = 0;
 int selectedcell;
+int whotomove = 0;
 int xx;
 int yy;
 
@@ -41,6 +42,7 @@ int boardupdate();
 int calculatemoves(){
 	int x,y;
 	if (switcher == 0){
+	if(whotomove == 1){
 	if(board[pxtocell(ev.mouse.x,ev.mouse.y)] == (BLACK | ROOK)){
 		x = ((pxtocell(ev.mouse.x,ev.mouse.y))% 8);
 		y = ((pxtocell(ev.mouse.x,ev.mouse.y)) - ((pxtocell(ev.mouse.x,ev.mouse.y)) % 8)) / 8;
@@ -323,6 +325,7 @@ int calculatemoves(){
 			}
 		}
 	}
+	} else {
 	if(board[pxtocell(ev.mouse.x,ev.mouse.y)] == (WHITE | ROOK)){
 		x = ((pxtocell(ev.mouse.x,ev.mouse.y))% 8);
 		y = ((pxtocell(ev.mouse.x,ev.mouse.y)) - ((pxtocell(ev.mouse.x,ev.mouse.y)) % 8)) / 8;
@@ -605,6 +608,7 @@ int calculatemoves(){
 			}
 		}
 	}
+	}
 	selectedcell = 8*y + x;
 	switcher = 1;
 	} else {
@@ -624,6 +628,11 @@ int piecemove(){
 	if(switcher == 1 && board[8*y+(x)] < 0){
 		board[(8*y)+x] = board[selectedcell];
 		board[selectedcell] = NONE;
+		if (whotomove == 1){
+			whotomove = 0;
+		} else {
+			whotomove = 1;
+		}
 		for (int k = 0;k<64;k++){
 			board[k] = abs(board[k]);
 		}
