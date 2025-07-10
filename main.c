@@ -8,7 +8,7 @@
 int main(){
 	printf("we done ?\n");
 	allegroinit();
-	fenparser("8/8/2q1rk2/3n1b2/4BP2/2KR1QN1/8/8");
+	fenparser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
 	al_flip_display();
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30);
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
@@ -29,6 +29,7 @@ int main(){
 		if(ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN){
 			drawboard();
 			boardupdate();
+			piecemove();
 			calculatemoves();
 			boardupdate();
 		}

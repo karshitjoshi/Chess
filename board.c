@@ -26,6 +26,7 @@ ALLEGRO_EVENT ev;
 ALLEGRO_TIMER* timer;
 bool redraw;
 int switcher = 0;
+int selectedcell;
 int xx;
 int yy;
 
@@ -38,8 +39,8 @@ int pxtocell(int x,int y);
 int boardupdate();
 
 int calculatemoves(){
-	if(switcher == 0){
 	int x,y;
+	if (switcher == 0){
 	if(board[pxtocell(ev.mouse.x,ev.mouse.y)] == (BLACK | ROOK)){
 		x = ((pxtocell(ev.mouse.x,ev.mouse.y))% 8);
 		y = ((pxtocell(ev.mouse.x,ev.mouse.y)) - ((pxtocell(ev.mouse.x,ev.mouse.y)) % 8)) / 8;
@@ -304,11 +305,11 @@ int calculatemoves(){
 		x = ((pxtocell(ev.mouse.x,ev.mouse.y))% 8);
 		y = ((pxtocell(ev.mouse.x,ev.mouse.y)) - ((pxtocell(ev.mouse.x,ev.mouse.y)) % 8)) / 8;
 		if(((board[8*(y+1)+(x-1)] == (WHITE | KING)) || (board[8*(y+1)+(x-1)] == (WHITE | QUEEN)) || (board[8*(y+1)+(x-1)] == (WHITE | BISHOP)) || (board[8*(y+1)+(x-1)] == (WHITE | KNIGHT)) || (board[8*(y+1)+(x-1)] == (WHITE | ROOK)) || (board[8*(y+1)+(x-1)] == (WHITE | PAWN))) && ((x-1 > 0) && (y+1 < 7))){
-			board[8*(y-1)+(x-1)] *= INDIC;
+			board[8*(y+1)+(x-1)] *= INDIC;
 		} else {
 		}
 		if(((board[8*(y+1)+(x+1)] == (WHITE | KING)) || (board[8*(y+1)+(x+1)] == (WHITE | QUEEN)) || (board[8*(y+1)+(x+1)] == (WHITE | BISHOP)) || (board[8*(y+1)+(x+1)] == (WHITE | KNIGHT)) || (board[8*(y+1)+(x+1)] == (WHITE | ROOK)) || (board[8*(y+1)+(x+1)] == (WHITE | PAWN))) && ((x+1 < 7) && (y+1 < 7))){
-			board[8*(y-1)+(x+1)] *= INDIC;
+			board[8*(y+1)+(x+1)] *= INDIC;
 		} else {
 		}
 		if(((board[8*(y+1)+(x)] == (WHITE | KING)) || (board[8*(y+1)+(x)] == (WHITE | QUEEN)) || (board[8*(y+1)+(x)] == (WHITE | BISHOP)) || (board[8*(y+1)+(x)] == (WHITE | KNIGHT)) || (board[8*(y+1)+(x)] == (WHITE | ROOK)) || (board[8*(y+1)+(x)] == (WHITE | PAWN))) || (y+1 > 7) || ((board[8*(y+1)+(x)] == (BLACK | KING)) || (board[8*(y+1)+(x)] == (BLACK | QUEEN)) || (board[8*(y+1)+(x)] == (BLACK | BISHOP)) || (board[8*(y+1)+(x)] == (BLACK | KNIGHT)) || (board[8*(y+1)+(x)] == (BLACK | ROOK)) || (board[8*(y+1)+(x)] == (BLACK | PAWN)))){
@@ -604,19 +605,29 @@ int calculatemoves(){
 			}
 		}
 	}
+	selectedcell = 8*y + x;
 	switcher = 1;
 	} else {
+		switcher = 0;
 		for (int k = 0;k<64;k++){
 			board[k] = abs(board[k]);
-			switcher = 0;
 		}
-	}
+	} 
 	return 0;
 }
 
-int piecemove(int fx,int fy,int dx,int dy){
-	board[((dy-1)*8)+(dx-1)] = board[((fy-1)*8)+(fx-1)];
-	board[((fy-1)*8)+(fx-1)] = NONE;
+int piecemove(){
+	int x,y;
+	x = ((pxtocell(ev.mouse.x,ev.mouse.y))% 8);
+	y = ((pxtocell(ev.mouse.x,ev.mouse.y)) - ((pxtocell(ev.mouse.x,ev.mouse.y)) % 8)) / 8;
+	fflush(stdout);
+	if(switcher == 1 && board[8*y+(x)] < 0){
+		board[(8*y)+x] = board[selectedcell];
+		board[selectedcell] = NONE;
+		for (int k = 0;k<64;k++){
+			board[k] = abs(board[k]);
+		}
+	}
 	return 0;
 }
 
